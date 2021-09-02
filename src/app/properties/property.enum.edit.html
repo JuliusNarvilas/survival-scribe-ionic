@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Tab 3
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-select *ngIf="typeValues.length > 1"
+    placeholder="Select Value"
+    value="{{ val }}">
+    <ion-select-option *ngFor="let item of typeValues" value="{{ item }}">{{ item }}</ion-select-option>
+  </ion-select>
+
+  <ion-label *ngIf="typeValues.length === 1">
+    {{ val }} (only one available option)
+  </ion-label>
+
+  <ion-label *ngIf="typeValues.length === 0">
+    <ion-skeleton-text animated></ion-skeleton-text>
+  </ion-label>
+
+</ion-content>

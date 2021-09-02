@@ -1,0 +1,19 @@
+
+<div>
+
+  <ion-label >{{label}}</ion-label>
+
+  <ion-button color="tertiary" (click)="add(-1)">
+    <ion-icon slot="icon-only" name="chevron-down-outline"></ion-icon>
+  </ion-button>
+
+  <div style="display: inline-block;">
+    <ion-input #dataInput [(ngModel)]="valStr" type="text" digitOnly canBeNegative="true" inputmode="numeric"
+    (ionChange)="onFieldChange($event)" (keypress)="onKeyPressBlurCheck($event)"></ion-input>
+  </div>
+
+  <ion-button color="tertiary" (click)="add(1)">
+    <ion-icon slot="icon-only" name="chevron-up-outline"></ion-icon>
+  </ion-button>
+
+</div>

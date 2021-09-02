@@ -1,0 +1,18 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Tab 3
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+  <ion-select v-if="todos.length > 0" placeholder="Select Value" color="primary">
+    <ion-select-option value="f">Female</ion-select-option>
+  </ion-select>
+
+  <ion-label v-else>
+    <ion-skeleton-text animated></ion-skeleton-text>
+  </ion-label>
+</ion-content>
