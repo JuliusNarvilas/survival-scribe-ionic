@@ -1,0 +1,8 @@
+.blended {
+  background-image: url(face.jpg);
+  background-color: red;
+  background-blend-mode: multiply;
+}
+
+
+
