@@ -1,0 +1,7 @@
+{
+  "name": "survival-scribe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
