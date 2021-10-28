@@ -117,14 +117,31 @@ File System Hierarchy:
     -settings
         -selected language
         -app version?
-        -highleight untrnaslated text
+        -highleight untrnaslated text for debugging
         -colour theme file
     *themes
-    *KingdomDeathMonster
-        -game config
+    *App settings file
+            -app version during last modification
+            -language
+            -theme
+
+    *module (KingdomDeathMonster)
+        -game settings file
+            -app version during last modification
+            -data-tag-filter (filtering expansion content)
+            -custom data
+
+        -new game save file
+        -game save file
+            -name
+            -date
+            -module version
+            -app version
+
+        -game setup
             -paths to game mode configs
-            -version number for config
-            -default language folder
+            -version number for setup
+            -language database path
         -game mode / campaign config
             -version number
             -entity definition sources
@@ -138,3 +155,89 @@ File System Hierarchy:
             (each json file)
         *campaigns
 
+
+
+
+data driven structures:
++properties
+    *string
+    *enum
+    *collection
+      (for disorders in KDM)
+    *entities
+      (having survivors in settlement as a property of entities)
+    *numerical
+    !!!!-int
+        -int-ranged
+    !!!!-int-reserve
+        -float
+        -float-ranged
+        **modifiers
+          ...
+        **settings
+            -dynamic-min
+            -dynamic-max
+        
+        **instance display customisations
+            -hide-min
+            -hide-max
+            -slider
+            -editable
+            *sizes
+                -embeded (small) s
+                -list entry (medium) m
+                -in-depth (large) l
+
++entity
+    *ID (GUID)
+    *properties
+
++pages
+
+    +views
+        *list
+        *table
+*
+
+
++inputs
+    *buttons
+        -navigational links
+        -scriptable macros
+    *sliders
+        -colour choice?
++display elements
+    *text
+    *icon
+
+
+
+Propertty structure:
+
+PropertyDefinition {
+  id;
+  label;
+  group / set;
+  viewLevel;
+  prop type;
+  defaultValue;
+  settings;
+}
+
+PropertyInstance {
+  definitionRef;
+  
+  ToString();
+}
+
+
+EntityDefinition {
+  name; (Like Survivor)
+  group / set;
+  viewLevel;
+  prop type;
+  
+  propertyIds[];
+
+  settings;
+}
