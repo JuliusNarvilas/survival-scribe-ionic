@@ -25,21 +25,21 @@ class EnumPropertyDataType {
   description: string;
   values: EnumPropertyData[] = [];
 
-  public static GetFactory(enumTypeName: string): EnumPropertyDataType {
+  constructor(enumTypeKey: string) {
+    this.key = enumTypeKey;
+  }
+
+  public static getFactory(enumTypeName: string): EnumPropertyDataType {
     if (enumTypeName) {
       return EnumPropertyDataType.allFactories.get(enumTypeName);
     }
     return undefined;
   }
 
-  public static AddFactory(value: EnumPropertyDataType) {
+  public static addFactory(value: EnumPropertyDataType) {
     if (value && value.key) {
       EnumPropertyDataType.allFactories.set(value.key, value);
     }
-  }
-
-  constructor(enumTypeKey: string) {
-    this.key = enumTypeKey;
   }
 }
 

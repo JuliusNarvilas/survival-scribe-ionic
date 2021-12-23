@@ -1,11 +1,10 @@
+/* eslint-disable no-bitwise */
 
 import {
   ExhaustibleNumericalProperty,
   NumericalProperty,
   NumericalPropertyChangeData,
   ENumericalPropertyChangeType } from './properties.shared.number';
-
-// tslint:disable : no-bitwise
 
 interface NumericalPropertyObserver<TContext> {
   update(eventData: NumericalPropertyChangeData<TContext>): void;
@@ -43,7 +42,7 @@ export class ObservableNumericalProperty<TContext> extends NumericalProperty<TCo
       if (!this.updating) {
           this.updating = true;
       } else {
-        changeType = changeType | ENumericalPropertyChangeType.NestedUpdate;
+        changeType = changeType | ENumericalPropertyChangeType.nestedUpdate;
       }
 
       const eventData = new NumericalPropertyChangeData<TContext>(
@@ -58,7 +57,7 @@ export class ObservableNumericalProperty<TContext> extends NumericalProperty<TCo
       this.updateModifiedValue();
 
       // leaving the scope of nested updating
-      if ((changeType & ENumericalPropertyChangeType.NestedUpdate) === ENumericalPropertyChangeType.None) {
+      if ((changeType & ENumericalPropertyChangeType.nestedUpdate) === ENumericalPropertyChangeType.none) {
           this.updating = false;
           this.triggerObservers(eventData);
       }
@@ -101,7 +100,7 @@ export class ObservableExhaustibleNumericalProperty<TContext> extends Exhaustibl
       if (!this.updating) {
           this.updating = true;
       } else {
-        changeType = changeType | ENumericalPropertyChangeType.NestedUpdate;
+        changeType = changeType | ENumericalPropertyChangeType.nestedUpdate;
       }
 
       const maxValue = this.getMax();
@@ -119,7 +118,7 @@ export class ObservableExhaustibleNumericalProperty<TContext> extends Exhaustibl
       this.updateModifiedValue();
 
       // leaving the scope of nested updating
-      if ((changeType & ENumericalPropertyChangeType.NestedUpdate) === ENumericalPropertyChangeType.None) {
+      if ((changeType & ENumericalPropertyChangeType.nestedUpdate) === ENumericalPropertyChangeType.none) {
           this.updating = false;
           this.triggerObservers(eventData);
       }

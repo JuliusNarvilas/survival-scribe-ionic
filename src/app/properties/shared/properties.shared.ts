@@ -1,21 +1,16 @@
 
 export enum EPropertyCompType {
-    Unknown,
-    Int,
-    IntCollection,
-    IntExhaustible,
-    IntExhaustibleCollection,
-    Float,
-    FloatCollection,
-    FloatExhaustible,
-    FloatExhaustibleCollection,
-    Enum,
-    EnumCollection,
-    String,
-    StringCollection,
-    Bool,
-    BoolCollection,
-    AnyCollection,
+    unknown,
+    int,
+    intRanged,
+    intReserve,
+    float,
+    floatRanged,
+    floatReserve,
+    enum,
+    text,
+    bool,
+    entity
 }
 
 export class EPropertyCompTypeString {
@@ -38,7 +33,7 @@ export class EPropertyCompTypeString {
     public static getEnum(enumString: string): EPropertyCompType {
         const result = EPropertyCompTypeString.enumMapping[enumString];
         if (result === undefined) {
-            return EPropertyCompType.Unknown;
+            return EPropertyCompType.unknown;
         }
         return result;
     }
@@ -56,9 +51,17 @@ export class EPropertyCompTypeString {
 
 
 export abstract class AnyProperty {
-    typeMetadata: number = EPropertyCompType.Unknown;
+    typeMetadata: number = EPropertyCompType.unknown;
 
     abstract getValueAsString(): string;
+}
+
+export class EntityProperty {
+  public readonly name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 }
 
 export class CollectionProperty extends AnyProperty{

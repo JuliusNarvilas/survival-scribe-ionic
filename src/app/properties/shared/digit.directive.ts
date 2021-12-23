@@ -12,6 +12,7 @@ import {
 // const { Clipboard } = Plugins;
 
 @Directive({
+    // eslint-disable-next-line @angular-eslint/directive-selector
     selector: '[digitOnly]',
   })
   export class DigitOnlyDirective implements OnChanges {
@@ -30,121 +31,121 @@ import {
       'Paste',
     ];
 
-    private hasDecimalPoint = false;
-
     @Input() decimal = false;
     @Input() canBeNegative = false;
     @Input() decimalSeparator = '.';
     @Input() min = -Infinity;
     @Input() max = Infinity;
     @Input() pattern?: string | RegExp;
-    private regex: RegExp;
     inputElement: HTMLInputElement;
+
+    private hasDecimalPoint = false;
+    private regex: RegExp;
 
     constructor(public el: ElementRef) {
         this.inputElement = el.nativeElement;
-    }
-
-    getRealInputElement(): HTMLInputElement {
-      // real input element will be created dynamically later by ionic,
-      // so we can't get the real input element for ionic input during custruction
-        if (this.inputElement.nodeName === 'ION-INPUT') {
-            return this.inputElement.getElementsByTagName('input')[0];
-        }
-        return this.inputElement;
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-      if (changes.pattern) {
-        this.regex = this.pattern ? RegExp(this.pattern) : null;
-      }
-
-      if (changes.min) {
-        const maybeMin = Number(this.min);
-        this.min = isNaN(maybeMin) ? -Infinity : maybeMin;
-      }
-
-      if (changes.max) {
-        const maybeMax = Number(this.max);
-        this.max = isNaN(maybeMax) ? Infinity : maybeMax;
-      }
     }
 
     @HostListener('keydown', ['$event'])
     onKeyDown(e: KeyboardEvent): any {
       if (
         DigitOnlyDirective.navigationKeys.indexOf(e.key) > -1 || // Allow: navigation keys: backspace, delete, arrows etc.
-        (e.key === 'a' && e.ctrlKey === true) || // Allow: Ctrl+A
-        (e.key === 'c' && e.ctrlKey === true) || // Allow: Ctrl+C
-        (e.key === 'v' && e.ctrlKey === true) || // Allow: Ctrl+V
-        (e.key === 'x' && e.ctrlKey === true) || // Allow: Ctrl+X
-        (e.key === 'a' && e.metaKey === true) || // Allow: Cmd+A (Mac)
-        (e.key === 'c' && e.metaKey === true) || // Allow: Cmd+C (Mac)
-        (e.key === 'v' && e.metaKey === true) || // Allow: Cmd+V (Mac)
-        (e.key === 'x' && e.metaKey === true) // Allow: Cmd+X (Mac)
+        (
+          (e.ctrlKey === true || e.metaKey === true) &&
+          (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x')
+        )
+//        (e.key === 'a' && e.ctrlKey === true) || // Allow: Ctrl+A
+//        (e.key === 'c' && e.ctrlKey === true) || // Allow: Ctrl+C
+//        (e.key === 'v' && e.ctrlKey === true) || // Allow: Ctrl+V
+//        (e.key === 'x' && e.ctrlKey === true) || // Allow: Ctrl+X
+//        (e.key === 'a' && e.metaKey === true) || // Allow: Cmd+A (Mac)
+//        (e.key === 'c' && e.metaKey === true) || // Allow: Cmd+C (Mac)
+//        (e.key === 'v' && e.metaKey === true) || // Allow: Cmd+V (Mac)
+//        (e.key === 'x' && e.metaKey === true) // Allow: Cmd+X (Mac)
       ) {
         // let it happen, don't do anything
         return;
       }
 
       let newValue = '';
+      const realInputElement = this.getRealInputElement();
 
-      if (this.decimal && e.key === this.decimalSeparator) {
+      //when replacing text range
+      if (realInputElement.selectionStart < realInputElement.selectionEnd) {
         newValue = this.forecastValue(e.key);
-        if (newValue.split(this.decimalSeparator).length > 2) { // has two or more decimal points
+        if (newValue === ' ' || isNaN(Number(newValue))) {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
           return;
-        } else {
-          this.hasDecimalPoint = newValue.indexOf(this.decimalSeparator) > -1;
-          return; // Allow: only one decimal point
         }
+        return;
       }
 
-      const realInputElement = this.getRealInputElement();
+      let acceptableInput = false;
 
-      // check if negative numbers are allowed
-      if (e.key !== '-' || this.canBeNegative === false || realInputElement.selectionStart !== 0) {
-        // Ensure that it is a number and stop the keypress
+      if (e.key === this.decimalSeparator) {
+        if (this.decimal) {
+          newValue = this.forecastValue(e.key);
 
-        if (e.key === ' ' || isNaN(Number(e.key))) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            return;
+          let decimalSeparatorCount = -1;
+          let separatorIndex = 0;
+          do {
+            separatorIndex = newValue.indexOf(this.decimalSeparator, separatorIndex);
+            decimalSeparatorCount++;
+          } while (separatorIndex !== -1);
+
+          if (decimalSeparatorCount === 1)
+          {
+            this.hasDecimalPoint = true;
+            acceptableInput = true;
+          }
         }
       }
-
-      // prevent front zero
-      if (e.key === '0')
+      else if (e.key === '-')
       {
-        const oldValue = realInputElement.value;
-        const seperatorIndex = oldValue.indexOf(this.decimalSeparator);
-        // tslint:disable-next-line: prefer-for-of
-        for (let i = 0; i < oldValue.length; i++) {
-            if (seperatorIndex === i) {
-                // if there were no digits before the decimal point
-                // then the zero can be placed anywhere and it will make sense
-                break;
-            }
-
-            if (oldValue[i] !== '0' && oldValue[i] !== '-') {
-              if (realInputElement.selectionStart <= i) {
-                // zero does not make sense to be placed
-                // before first non-zero number
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return;
-              }
-              else {
-                  // zero can always be placed after the first
-                  // non-zero number
-                  break;
-              }
-            }
+        if(this.canBeNegative && realInputElement.selectionStart === 0)
+        {
+          acceptableInput = true;
         }
+      }
+      else if (e.key === '0') {
+        const oldValue = realInputElement.value;
+        const decimalSeperatorIndex = oldValue.indexOf(this.decimalSeparator);
+        //0 is always valid past decimal point, if there is no value or other special cases like "-"/".x"/"-.x"
+        if (
+          (oldValue.length === 0) || //"_"
+          (decimalSeperatorIndex === 0 && realInputElement.selectionStart === 0) || //"_.x"
+          (decimalSeperatorIndex >= 0 && realInputElement.selectionStart > decimalSeperatorIndex) || //".x_x"
+          (oldValue.length > 0 && oldValue[0] === '-' && (oldValue.length === 1 || decimalSeperatorIndex === 1)) //"-_"/"-_.x"
+          )
+        {
+          acceptableInput = true;
+        }
+        else
+        {
+          // tslint:disable-next-line: prefer-for-of
+          for (let i = 0; i < oldValue.length; i++) {
+            if (oldValue[i] !== '0' && oldValue[i] !== '-') {
+              if (realInputElement.selectionStart > i) {
+                acceptableInput = true;
+              }
+              break;
+            }
+          }
+        }
+      }
+      else if(e.key !== ' ' && isNaN(Number(e.key)) === false)
+      {
+        acceptableInput = true;
+      }
+
+      if(acceptableInput === false)
+      {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return;
       }
 
       newValue = newValue || this.forecastValue(e.key);
@@ -189,6 +190,31 @@ import {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
+    }
+
+    getRealInputElement(): HTMLInputElement {
+      // real input element will be created dynamically later by ionic,
+      // so we can't get the real input element for ionic input during custruction
+        if (this.inputElement.nodeName === 'ION-INPUT') {
+            return this.inputElement.getElementsByTagName('input')[0];
+        }
+        return this.inputElement;
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes.pattern) {
+        this.regex = this.pattern ? RegExp(this.pattern) : null;
+      }
+
+      if (changes.min) {
+        const maybeMin = Number(this.min);
+        this.min = isNaN(maybeMin) ? -Infinity : maybeMin;
+      }
+
+      if (changes.max) {
+        const maybeMax = Number(this.max);
+        this.max = isNaN(maybeMax) ? Infinity : maybeMax;
+      }
     }
 
     private pasteData(pastedContent: string): void {
@@ -287,7 +313,7 @@ import {
 
             // strip "0" digits at the front
             if (result.length > 0) {
-                const numberVal = parseInt(result, undefined);
+                const numberVal = parseInt(result, 10);
                 result = numberVal.toString();
             }
       }
@@ -326,14 +352,17 @@ import {
 
     private forecastValue(key: string): string {
         const realInputElement = this.getRealInputElement();
-        const selectionStart = realInputElement.selectionStart;
-        const selectionEnd = realInputElement.selectionEnd;
         const oldValue = realInputElement.value;
-        const selection = oldValue.substring(selectionStart, selectionEnd);
-        return selection
-            ? oldValue.replace(selection, key)
-            : oldValue.substring(0, selectionStart) +
-                key +
-                oldValue.substring(selectionStart);
+        //const selectionStart = realInputElement.selectionStart;
+        //const selectionEnd = realInputElement.selectionEnd;
+
+        return oldValue.substring(0, realInputElement.selectionStart) + key + oldValue.substring(realInputElement.selectionEnd);
+
+        //const selection = oldValue.substring(selectionStart, selectionEnd);
+        //return selection
+        //    ? oldValue.replace(selection, key)
+        //    : oldValue.substring(0, selectionStart) +
+        //        key +
+        //        oldValue.substring(selectionStart);
     }
   }

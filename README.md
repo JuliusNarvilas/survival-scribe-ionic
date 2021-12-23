@@ -162,8 +162,9 @@ data driven structures:
 +properties
     *string
     *enum
-    *collection
+    *collection of properties
       (for disorders in KDM)
+      -with type restriction set
     *entities
       (having survivors in settlement as a property of entities)
     *numerical

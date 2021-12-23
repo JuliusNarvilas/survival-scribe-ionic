@@ -1,5 +1,4 @@
-
-// tslint:disable : no-bitwise
+/* eslint-disable no-bitwise */
 
 import { AnyProperty } from './properties.shared';
 
@@ -7,43 +6,43 @@ export enum ENumericalPropertyChangeType {
   /**
    * Empty mask.
    */
-  None = 0,
+  none = 0,
   /**
    * Flag for a new modifier being added.
    */
-  ModifierAdd = 1 << 0,
+  modifierAdd = 1 << 0,
   /**
    * Flag for a modifier being removed.
    */
-  ModifierRemove = 1 << 1,
+  modifierRemove = 1 << 1,
   /**
    * Flag for setting the base value.
    */
-  BaseSet = 1 << 2,
+  baseSet = 1 << 2,
   /**
    * Flag for depleating or restoring the max value.
    */
-  Deplete = 1 << 3,
+  deplete = 1 << 3,
   /**
    * Flag for indicating that changes were made through a bundled change submission.
    */
-  Bundle = 1 << 4,
+  bundle = 1 << 4,
   /**
    * Flag for indicating that an explicit update request was made.
    */
-  ForceUpdate = 1 << 5,
+  forceUpdate = 1 << 5,
   /**
    * Flag for indicating that property changes for this update process were made inside another update process.
    *
    * It's recommended to always check and avoid nested updates unless required.
    * Unintended nested updates can result to an infinite recursion and a stack overflow.
    */
-  NestedUpdate = 1 << 6,
+  nestedUpdate = 1 << 6,
 
   /**
    * Mask containing flags for any type of modifier change.
    */
-  ModifierChange = ModifierAdd | ModifierRemove
+  modifierChange = modifierAdd | modifierRemove
 }
 
 
@@ -77,8 +76,8 @@ export class NumericalPropertyChangeData<TContext> {
 
 
 export abstract class NumericalModifierBase {
-  protected lastValue: number;
   public readonly key: string;
+  protected lastValue: number;
 
   constructor(key: string) {
     this.lastValue = 0;
@@ -103,6 +102,7 @@ export abstract class NumericalModifier<TContext> extends NumericalModifierBase 
 
 /**
  * Property class to represent a numerical value
+ *
  * @template TContext Change context type
  */
 export class NumericalProperty<TContext> extends AnyProperty {
@@ -114,15 +114,6 @@ export class NumericalProperty<TContext> extends AnyProperty {
 
   protected userData: any;
 
-  private static modifierSortCompare(arg1: NumericalModifierBase, arg2: NumericalModifierBase): number {
-    const arg1Order = arg1.getOrder();
-    const arg2Order = arg2.getOrder();
-    if (arg1Order === arg2Order) {
-      return 0;
-    }
-    return arg1Order < arg2Order ? -1 : 1;
-  }
-
   constructor(value: number) {
     super();
     this.value = value;
@@ -130,6 +121,15 @@ export class NumericalProperty<TContext> extends AnyProperty {
     this.finalModifier = 0;
     this.updating = false;
     this.modifiers = [];
+  }
+
+  private static modifierSortCompare(arg1: NumericalModifierBase, arg2: NumericalModifierBase): number {
+    const arg1Order = arg1.getOrder();
+    const arg2Order = arg2.getOrder();
+    if (arg1Order === arg2Order) {
+      return 0;
+    }
+    return arg1Order < arg2Order ? -1 : 1;
   }
 
   public getValue(): number {
@@ -145,7 +145,7 @@ export class NumericalProperty<TContext> extends AnyProperty {
       context = this.makeContext();
     }
     this.baseValue = value;
-    this.updateInternal(ENumericalPropertyChangeType.BaseSet, context);
+    this.updateInternal(ENumericalPropertyChangeType.baseSet, context);
   }
 
   public getValuePositive(): number {
@@ -158,7 +158,7 @@ export class NumericalProperty<TContext> extends AnyProperty {
     }
     this.modifiers.push(modifier);
     (this.modifiers as NumericalModifierBase[]).sort(NumericalProperty.modifierSortCompare);
-    this.updateInternal(ENumericalPropertyChangeType.ModifierAdd, context);
+    this.updateInternal(ENumericalPropertyChangeType.modifierAdd, context);
   }
 
   public removeModifier(modifier: string | NumericalModifier<TContext>, context: TContext): void {
@@ -182,14 +182,14 @@ export class NumericalProperty<TContext> extends AnyProperty {
     if (index > -1) {
       this.modifiers.splice(index, 1);
       (this.modifiers as NumericalModifierBase[]).sort(NumericalProperty.modifierSortCompare);
-      this.updateInternal(ENumericalPropertyChangeType.ModifierRemove, context);
+      this.updateInternal(ENumericalPropertyChangeType.modifierRemove, context);
     }
   }
 
   public update(changeType?: ENumericalPropertyChangeType, context?: TContext) {
-    let changeTypeMask = ENumericalPropertyChangeType.ForceUpdate;
+    let changeTypeMask = ENumericalPropertyChangeType.forceUpdate;
     if (changeType !== undefined) {
-      changeTypeMask = changeType | ENumericalPropertyChangeType.ForceUpdate;
+      changeTypeMask = changeType | ENumericalPropertyChangeType.forceUpdate;
     }
     if (!context) {
       context = this.makeContext();
@@ -212,7 +212,7 @@ export class NumericalProperty<TContext> extends AnyProperty {
         if (!this.updating) {
             this.updating = true;
         } else {
-          changeType = changeType | ENumericalPropertyChangeType.NestedUpdate;
+          changeType = changeType | ENumericalPropertyChangeType.nestedUpdate;
         }
 
         const eventData = new NumericalPropertyChangeData<TContext>(
@@ -227,7 +227,7 @@ export class NumericalProperty<TContext> extends AnyProperty {
         this.updateModifiedValue();
 
         // leaving the scope of nested updating
-        if ((changeType & ENumericalPropertyChangeType.NestedUpdate) === ENumericalPropertyChangeType.None) {
+        if ((changeType & ENumericalPropertyChangeType.nestedUpdate) === ENumericalPropertyChangeType.none) {
             this.updating = false;
         }
     } else {
@@ -268,7 +268,7 @@ export class ExhaustibleNumericalProperty<TContext> extends NumericalProperty<TC
       context = this.makeContext();
     }
     this.depletion += value;
-    this.updateInternal(ENumericalPropertyChangeType.Deplete, context);
+    this.updateInternal(ENumericalPropertyChangeType.deplete, context);
   }
 
   restore(value: number, context?: TContext): void {
@@ -280,7 +280,7 @@ export class ExhaustibleNumericalProperty<TContext> extends NumericalProperty<TC
       if (!this.updating) {
         this.updating = true;
       } else {
-          changeType = changeType | ENumericalPropertyChangeType.NestedUpdate;
+          changeType = changeType | ENumericalPropertyChangeType.nestedUpdate;
       }
 
       const maxValue = this.getMax();
@@ -297,7 +297,7 @@ export class ExhaustibleNumericalProperty<TContext> extends NumericalProperty<TC
       this.depletion = eventData.newDepletion;
       this.updateExhaustableModifiedValue();
 
-      if ((changeType & ENumericalPropertyChangeType.NestedUpdate) === ENumericalPropertyChangeType.None) {
+      if ((changeType & ENumericalPropertyChangeType.nestedUpdate) === ENumericalPropertyChangeType.none) {
           this.updating = false;
       }
     } else {
