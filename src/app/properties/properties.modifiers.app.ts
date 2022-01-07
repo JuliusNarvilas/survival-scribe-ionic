@@ -8,7 +8,7 @@ import {
 import { NumericalPropertyChangeData, NumericalModifier } from './shared/properties.shared.number';
 import { Input } from '@angular/core';
 import { AppStateContext } from '../models/models.shared';
-import { PropertyModifierDefinition } from '../models/models.definitions';
+import { PropertyModifierDefinition } from '../models/models.property.definition';
 import {Interpreter as JSInterpreter} from 'js-interpreter';
 import { ScriptExec } from '../libs/scriptExec/scriptExec';
 import { EnumProperty } from './shared/properties.shared.enum';

@@ -1,6 +1,9 @@
+import { Entity } from "src/app/entity/entity.shared";
+import { PropertyDefinition } from "src/app/models/models.property.definition";
 
 export enum EPropertyCompType {
     unknown,
+    bool,
     int,
     intRanged,
     intReserve,
@@ -9,22 +12,20 @@ export enum EPropertyCompType {
     floatReserve,
     enum,
     text,
-    bool,
     entity
 }
 
+/*
 export class EPropertyCompTypeString {
     private static readonly enumMapping = {
-        Int: EPropertyCompType.Int,
-        IntExhaustible: EPropertyCompType.IntExhaustible,
-        IntCollection: EPropertyCompType.IntCollection,
-        IntExhaustibleCollection: EPropertyCompType.FloatExhaustibleCollection,
-        Float: EPropertyCompType.Float,
-        FloatCollection: EPropertyCompType.FloatCollection,
-        FloatExhaustible: EPropertyCompType.FloatExhaustible,
-        FloatExhaustibleCollection: EPropertyCompType.FloatExhaustibleCollection,
-        Enum: EPropertyCompType.Enum,
-        EnumCollection: EPropertyCompType.EnumCollection,
+        int: EPropertyCompType.int,
+        intReserve: EPropertyCompType.intReserve,
+        intRanged: EPropertyCompType.intRanged,
+        float: EPropertyCompType.float,
+        floatRanged: EPropertyCompType.floatRanged,
+        floatReserve: EPropertyCompType.floatReserve,
+        enum: EPropertyCompType.enum,
+        enumCollection: EPropertyCompType.EnumCollection,
         String: EPropertyCompType.String,
         StringCollection: EPropertyCompType.StringCollection,
         Bool: EPropertyCompType.Bool,
@@ -48,32 +49,50 @@ export class EPropertyCompTypeString {
         return undefined;
     }
 }
+*/
 
 
 export abstract class AnyProperty {
-    typeMetadata: number = EPropertyCompType.unknown;
+  info: PropertyDefinition;
+  typeMetadata: number = EPropertyCompType.unknown;
 
-    abstract getValueAsString(): string;
+  abstract getValueAsString(): string;
 }
 
-export class EntityProperty {
-  public readonly name: string;
+export class EntityContainerProperty extends AnyProperty {
+  public data: Entity[] = [];
 
-  constructor(name: string) {
-    this.name = name;
+  getValueAsString(): string {
+    let result = this.info.label + ' : [';
+    let loopCounter = 0;
+    for (const entityData of this.data) {
+      if (++loopCounter < this.data.length) {
+        result += entityData.name + ', ';
+      } else {
+        result += entityData.name;
+      }
+    }
+    result += ']';
+    return result;
   }
 }
 
-export class CollectionProperty extends AnyProperty{
-    private items: AnyProperty[] = [];
 
+export class TextContainerProperty extends AnyProperty {
+  public data: string[] = [];
 
-    constructor() {
-        super();
-        this.typeMetadata = EPropertyCompType.AnyCollection;
+  getValueAsString(): string {
+    let result = this.info.label + ' : [';
+    let loopCounter = 0;
+    for (const entityData of this.data) {
+      if (++loopCounter < this.data.length) {
+        result += entityData + ', ';
+      } else {
+        result += entityData;
+      }
     }
-
-    getValueAsString(): string {
-        return JSON.stringify(this.items);
-    }
+    result += ']';
+    return result;
+  }
 }
+

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { v4 as uuidv4 } from 'uuid';
 import { CharacterDefinition } from '../characters/characters.shared';
 import { Papa } from '../libs/papaparse/papaparse';
@@ -278,8 +279,8 @@ All survivors gain Club Specialization in addition to their other weapon profici
 
     private static serialiseDefault(path: string, definitionItem: any) {
         let folderPath: string;
-        let cahedOffRemovedValues: {name: string, value: any}[];
-        const valueSources = definitionItem.valueSources as [ { name: string, source: string } ];
+        let cahedOffRemovedValues: {name: string; value: any}[];
+        const valueSources = definitionItem.valueSources as [ { name: string; source: string } ];
         if (valueSources !== undefined) {
             cahedOffRemovedValues = [];
             const lastSeparatorIndex = path.lastIndexOf('/') + 1;

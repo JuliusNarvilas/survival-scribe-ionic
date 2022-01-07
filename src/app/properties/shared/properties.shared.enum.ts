@@ -1,14 +1,14 @@
+import { EnumValueDefinition } from 'src/app/models/models.enum.definition';
 import { AnyProperty } from './properties.shared';
-import { EnumValueDefinition } from 'src/app/models/models.definitions';
 
 /**
  * Class for representing an enum value that can be data driven.
  */
-class EnumPropertyData {
+class EnumData {
   readonly value: EnumValueDefinition;
-  readonly enumType: EnumPropertyDataType;
+  readonly enumType: EnumType;
 
-  constructor(enumType: EnumPropertyDataType, valueData: EnumValueDefinition) {
+  constructor(enumType: EnumType, valueData: EnumValueDefinition) {
     this.value = valueData;
     this.enumType = enumType;
   }
@@ -17,45 +17,52 @@ class EnumPropertyData {
 /**
  * Representation of an enum type that can create data driven enum values.
  */
-class EnumPropertyDataType {
-  private static readonly allFactories: Map<string, EnumPropertyDataType> = new Map();
+class EnumType {
+  private static readonly allFactories: Map<string, EnumType> = new Map();
 
   key: string;
   label: string;
   description: string;
-  values: EnumPropertyData[] = [];
+  values: EnumData[] = [];
 
   constructor(enumTypeKey: string) {
     this.key = enumTypeKey;
   }
 
-  public static getFactory(enumTypeName: string): EnumPropertyDataType {
+  public static getFactory(enumTypeName: string): EnumType {
     if (enumTypeName) {
-      return EnumPropertyDataType.allFactories.get(enumTypeName);
+      return EnumType.allFactories.get(enumTypeName);
     }
     return undefined;
   }
 
-  public static addFactory(value: EnumPropertyDataType) {
+  public static addFactory(value: EnumType) {
     if (value && value.key) {
-      EnumPropertyDataType.allFactories.set(value.key, value);
+      EnumType.allFactories.set(value.key, value);
     }
   }
 }
 
 
-export class EnumProperty extends AnyProperty {
-  data: EnumPropertyData;
+export class EnumContainerProperty extends AnyProperty {
+  data: EnumData[];
 
-  constructor(data: EnumPropertyData) {
+  constructor(data: EnumData[] = []) {
     super();
     this.data = data;
   }
 
   getValueAsString(): string {
-    if (this.data) {
-      return this.data.value.label;
+    let result = this.info.label + ' : [';
+    let loopCounter = 0;
+    for (const enumData of this.data) {
+      if (++loopCounter < this.data.length) {
+        result += enumData.value.label + ', ';
+      } else {
+        result += enumData.value.label;
+      }
     }
-    return '?';
+    result += ']';
+    return result;
   }
 }

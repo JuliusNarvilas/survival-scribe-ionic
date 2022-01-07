@@ -157,6 +157,17 @@ File System Hierarchy:
 
 
 
+*make collection properties implicit?
+
+different layers of data seperation:
+*structure definitions that are constant and contain type descriptors like int property ranges
+*serialisable model
+  **with all types (except numbers) fields registered as collections
+  **alternative properties with the same name but different type
+
+*loaded representational properties
+disk -> data model -> properties
+
 
 data driven structures:
 +properties

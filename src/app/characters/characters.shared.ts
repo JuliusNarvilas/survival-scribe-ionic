@@ -1,4 +1,4 @@
-import { PropertyDefinition } from '../models/models.definitions';
+import { PropertyDefinition } from '../models/models.property.definition';
 import { AnyProperty } from '../properties/shared/properties.shared';
 
 
