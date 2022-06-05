@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CharacterDefinition } from '../characters/characters.shared';
 import { Papa } from '../libs/papaparse/papaparse';
-import { EPropertyCompType, EPropertyCompTypeString } from '../properties/shared/properties.shared';
+import { EPropertyCompType, EPropertyCompTypeString } from '../properties/shared/prop.shared';
 import { AppIOService } from '../shared/AppIOService';
 import { EnumTypeDefinition, PropertyGroupsDefinition } from './models.definitions';
 

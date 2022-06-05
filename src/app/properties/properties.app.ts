@@ -3,28 +3,28 @@
 // import { Survivor } from '../models/survivor';
 import { Survivor } from 'src/app/characters/Survivor';
 import {
-  ObservableNumericalProperty,
-  ObservableExhaustibleNumericalProperty } from './shared/properties.shared.number.observable';
-import { NumericalPropertyChangeData, NumericalModifier } from './shared/properties.shared.number';
+  ObservableNumberProperty,
+  ObservableNumberReserveProperty } from './shared/properties.shared.number.observable';
+import { NumberPropertyChangeData, NumberModifier } from './shared/properties.shared.number';
 import { Input, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { AppStateContext } from '../models/models.shared';
 import { PropertyModifierDefinition } from '../models/models.property.definition';
 import {Interpreter as JSInterpreter} from 'js-interpreter';
 import { ScriptExec } from '../libs/scriptExec/scriptExec';
 import { EnumProperty } from './shared/properties.shared.enum';
-import { EPropertyCompType, AnyProperty } from './shared/properties.shared';
+import { EPropertyCompType, AnyProperty } from './shared/prop.shared';
 
 
 
 
-export class IntProperty extends ObservableNumericalProperty<AppStateContext> {
+export class IntProperty extends ObservableNumberProperty {
   constructor(value = 0) {
     super(value);
     this.typeMetadata = EPropertyCompType.Int;
   }
 }
 
-export class IntExhaustibleProperty extends ObservableExhaustibleNumericalProperty<AppStateContext> {
+export class IntExhaustibleProperty extends ObservableNumberReserveProperty {
   constructor(value = 0) {
     super(value);
     this.typeMetadata = EPropertyCompType.IntExhaustible;
@@ -73,14 +73,14 @@ export class IntExhaustibleCollectionProperty extends AnyProperty {
 }
 
 
-export class FloatProperty extends ObservableNumericalProperty<AppStateContext> {
+export class FloatProperty extends ObservableNumberProperty {
   constructor(value = 0) {
     super(value);
     this.typeMetadata = EPropertyCompType.Float;
   }
 }
 
-export class FloatExhaustibleProperty extends ObservableExhaustibleNumericalProperty<AppStateContext> {
+export class FloatExhaustibleProperty extends ObservableNumberReserveProperty {
   constructor(value = 0) {
     super(value);
     this.typeMetadata = EPropertyCompType.FloatExhaustible;

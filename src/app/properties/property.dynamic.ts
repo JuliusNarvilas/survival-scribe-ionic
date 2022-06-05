@@ -9,7 +9,7 @@ import {
     ComponentRef,
     ComponentFactory
 } from '@angular/core';
-import { AnyProperty, EPropertyCompTypeString, EPropertyCompType } from './shared/properties.shared';
+import { AnyProperty, EPropertyCompTypeString, EPropertyCompType } from './shared/prop.shared';
 import { PropertyIntEditComponent } from './numberComponents/property.int.edit';
 import { IntProperty, PropertyComponent } from './properties.app';
 import { PropertyIntDisplayComponent } from './numberComponents/property.int.display';

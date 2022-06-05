@@ -1,51 +1,49 @@
 /* eslint-disable no-bitwise */
 
+import { EPropertyChangeType, PropertyChangeData, PropertyObserver } from '../../shared/prop.shared';
 import {
-  ExhaustibleNumericalProperty,
-  NumericalProperty,
-  NumericalPropertyChangeData,
-  ENumericalPropertyChangeType } from './properties.shared.number';
+  NumberReserveProperty,
+  NumberProperty,
+  NumberPropertyChangeData } from './prop.number';
 
-interface NumericalPropertyObserver<TContext> {
-  update(eventData: NumericalPropertyChangeData<TContext>): void;
-}
 
-export class ObservableNumericalProperty<TContext> extends NumericalProperty<TContext> {
-  private observers: NumericalPropertyObserver<TContext>[] = [];
+
+export class ObservableNumberProperty extends NumberProperty {
+  private observers: PropertyObserver[] = [];
 
   constructor(value: number) {
     super(value);
   }
 
-  public attachObserver(observer: NumericalPropertyObserver<TContext>): void {
+  public attachObserver(observer: NumberPropertyObserver): void {
     if (observer) {
       this.observers.push(observer);
     }
   }
 
-  public detachObserver(observer: NumericalPropertyObserver<TContext>): void {
+  public detachObserver(observer: NumberPropertyObserver): void {
     const matchIndex = this.observers.indexOf(observer);
     if (matchIndex > -1) {
       this.observers.splice(matchIndex, 1);
     }
   }
 
-  protected triggerObservers(eventData: NumericalPropertyChangeData<TContext>): void {
+  protected triggerObservers(eventData: NumberPropertyChangeData): void {
     for (const observer of this.observers) {
       observer.update(eventData);
     }
   }
 
-  protected updateInternal(changeType: ENumericalPropertyChangeType, context: TContext): void {
+  protected updateInternal(changeType: EPropertyChangeType, context: any): void {
     if ((this.modifiers.length > 0) || (this.observers.length > 0)) {
       // tracking of nested update types
       if (!this.updating) {
           this.updating = true;
       } else {
-        changeType = changeType | ENumericalPropertyChangeType.nestedUpdate;
+        changeType = changeType | EPropertyChangeType.nestedUpdate;
       }
 
-      const eventData = new NumericalPropertyChangeData<TContext>(
+      const eventData = new NumberPropertyChangeData(
             this,
             changeType,
             this.finalModifier,
@@ -57,7 +55,7 @@ export class ObservableNumericalProperty<TContext> extends NumericalProperty<TCo
       this.updateModifiedValue();
 
       // leaving the scope of nested updating
-      if ((changeType & ENumericalPropertyChangeType.nestedUpdate) === ENumericalPropertyChangeType.none) {
+      if ((changeType & EPropertyChangeType.nestedUpdate) === EPropertyChangeType.none) {
           this.updating = false;
           this.triggerObservers(eventData);
       }
@@ -68,43 +66,43 @@ export class ObservableNumericalProperty<TContext> extends NumericalProperty<TCo
 
 }
 
-export class ObservableExhaustibleNumericalProperty<TContext> extends ExhaustibleNumericalProperty<TContext> {
-  private observers: NumericalPropertyObserver<TContext>[] = [];
+export class ObservableNumberReserveProperty extends NumberReserveProperty {
+  private observers: NumberPropertyObserver[] = [];
 
   constructor(value: number) {
     super(value);
   }
 
-  public attachObserver(observer: NumericalPropertyObserver<TContext>): void {
+  public attachObserver(observer: NumberPropertyObserver): void {
     if (observer) {
       this.observers.push(observer);
     }
   }
 
-  public detachObserver(observer: NumericalPropertyObserver<TContext>): void {
+  public detachObserver(observer: NumberPropertyObserver): void {
     const matchIndex = this.observers.indexOf(observer);
     if (matchIndex > -1) {
       this.observers.splice(matchIndex, 1);
     }
   }
 
-  protected triggerObservers(eventData: NumericalPropertyChangeData<TContext>): void {
+  protected triggerObservers(eventData: NumberPropertyChangeData): void {
     for (const observer of this.observers) {
       observer.update(eventData);
     }
   }
 
-  protected updateInternal(changeType: ENumericalPropertyChangeType, context: TContext): void {
+  protected updateInternal(changeType: EPropertyChangeType, context: any): void {
     if ((this.modifiers.length > 0) || (this.observers.length > 0)) {
       // tracking of nested update types
       if (!this.updating) {
           this.updating = true;
       } else {
-        changeType = changeType | ENumericalPropertyChangeType.nestedUpdate;
+        changeType = changeType | EPropertyChangeType.nestedUpdate;
       }
 
       const maxValue = this.getMax();
-      const eventData = new NumericalPropertyChangeData<TContext>(
+      const eventData = new NumberPropertyChangeData(
         this,
         changeType,
         this.finalModifier,
@@ -118,7 +116,7 @@ export class ObservableExhaustibleNumericalProperty<TContext> extends Exhaustibl
       this.updateModifiedValue();
 
       // leaving the scope of nested updating
-      if ((changeType & ENumericalPropertyChangeType.nestedUpdate) === ENumericalPropertyChangeType.none) {
+      if ((changeType & EPropertyChangeType.nestedUpdate) === EPropertyChangeType.none) {
           this.updating = false;
           this.triggerObservers(eventData);
       }

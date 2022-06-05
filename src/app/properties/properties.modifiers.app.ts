@@ -3,29 +3,29 @@
 // import { Survivor } from '../models/survivor';
 import { Survivor } from 'src/app/characters/Survivor';
 import {
-  ObservableNumericalProperty,
-  ObservableExhaustibleNumericalProperty } from './shared/properties.shared.number.observable';
-import { NumericalPropertyChangeData, NumericalModifier } from './shared/properties.shared.number';
+  ObservableNumberProperty,
+  ObservableNumberReserveProperty } from './data-types/number/prop.number.observable';
+import { NumberPropertyChangeData, NumberModifier } from './data-types/number/prop.number';
 import { Input } from '@angular/core';
 import { AppStateContext } from '../models/models.shared';
 import { PropertyModifierDefinition } from '../models/models.property.definition';
 import {Interpreter as JSInterpreter} from 'js-interpreter';
 import { ScriptExec } from '../libs/scriptExec/scriptExec';
 import { EnumProperty } from './shared/properties.shared.enum';
-import { EPropertyCompType, AnyProperty } from './shared/properties.shared';
+import { EPropertyCompType, AnyProperty } from './shared/prop.shared';
 
 
 
-export abstract class AppNumericalModifier extends NumericalModifier<AppStateContext>{
+export abstract class AppNumericalModifier extends NumberModifier<AppStateContext>{
+
+  protected makeContext(): AppStateContext {
+    return AppStateContext.currentContext;
+  }
 
   public abstract getLable(): string;
   public abstract getDescription(): string;
   public abstract getTags(): string[];
   public abstract serializedDataObj(): string;
-
-  protected makeContext(): AppStateContext {
-    return AppStateContext.currentContext;
-  }
 }
 
 export class NumericalModifierPredefined extends AppNumericalModifier {
@@ -47,11 +47,11 @@ export class NumericalModifierPredefined extends AppNumericalModifier {
     let currentIndex = 0;
     for (const currentPlaceholder of placeholders) {
       if (currentIndex < currentPlaceholder.begin) {
-        result += template.substr(currentIndex, currentPlaceholder.begin - currentIndex);
+        result += template.substring(currentIndex, currentIndex);
       }
       currentIndex = currentPlaceholder.begin + currentPlaceholder.length;
 
-      const codeStr = template.substr(currentPlaceholder.begin + 1, currentPlaceholder.length - 2);
+      const codeStr = template.substring(currentPlaceholder.begin + 1, currentPlaceholder.begin + currentPlaceholder.length - 2);
       if (codeStr !== '') {
         ScriptExec.Run(codeStr, { context: appContext }, (scriptResult: any) => {
           if (typeof scriptResult === 'string') {
@@ -97,7 +97,7 @@ export class NumericalModifierPredefined extends AppNumericalModifier {
     return this.data.tags;
   }
 
-  public update(eventData: NumericalPropertyChangeData<AppStateContext>): void {
+  public update(eventData: NumberPropertyChangeData<AppStateContext>): void {
     if (this.data.updateCode) {
       ScriptExec.Run(this.data.updateCode, { propertyChange: eventData, context: AppStateContext.currentContext });
     }
@@ -132,7 +132,7 @@ export class NumericalModifierSimple extends AppNumericalModifier {
   }
 
 
-  update(eventData: NumericalPropertyChangeData<AppStateContext>): void {
+  update(eventData: NumberPropertyChangeData<AppStateContext>): void {
       eventData.newModification += this.lastValue;
   }
 
@@ -170,7 +170,7 @@ export class NumericalModifierFromEnum extends AppNumericalModifier {
   }
 
 
-  update(eventData: NumericalPropertyChangeData<AppStateContext>): void {
+  update(eventData: NumberPropertyChangeData<AppStateContext>): void {
       eventData.newModification += this.lastValue;
   }
 

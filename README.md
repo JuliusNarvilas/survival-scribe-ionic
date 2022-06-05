@@ -159,8 +159,29 @@ File System Hierarchy:
 
 *make collection properties implicit?
 
+//--------------------------------------------------------------------------------------------------------
+WIP notes:
+MVC approach?
+*data model
+*view components
+*controller????
+    *property classes?
+
+***data/definition/info
+*enum Value (single) disk
+*enum type (single) disk (is still needed on disk for localisations at least)
+*enum reference (many) inst (needs to be in memory value ptrs)
+*enum reference data (many) disk (needs to be serialisable string ids)
+
+
+*everything is pure model and only view/coontrollers do localisation?
+
+//--------------------------------------------------------------------------------------------------------
+
+
 different layers of data seperation:
 *structure definitions that are constant and contain type descriptors like int property ranges
+    *(enum definitions, int prop definitions for field names?)
 *serialisable model
   **with all types (except numbers) fields registered as collections
   **alternative properties with the same name but different type
